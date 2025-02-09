@@ -19,15 +19,17 @@ def speech_to_text():
     audio_file.save(file_path)
 
     recognizer = sr.Recognizer()
-    with sr.AudioFile(file_path) as source:
-        audio_data = recognizer.record(source)
-        try:
+    try:
+        with sr.AudioFile(file_path) as source:
+            audio_data = recognizer.record(source)
             text = recognizer.recognize_google(audio_data)
             return jsonify({"transcription": text})
-        except sr.UnknownValueError:
-            return jsonify({"error": "Could not understand audio"}), 400
-        except sr.RequestError:
-            return jsonify({"error": "Speech Recognition API unavailable"}), 500
+    except sr.UnknownValueError:
+        return jsonify({"error": "Could not understand audio"}), 400
+    except sr.RequestError:
+        return jsonify({"error": "Speech Recognition API unavailable"}), 500
+    except Exception as e:
+        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
 
 # Function to start Streamlit
 def run_streamlit():
