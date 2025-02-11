@@ -17,8 +17,8 @@ if "audio_data" not in st.session_state:
     st.session_state.audio_data = []
 if "feedback" not in st.session_state:
     st.session_state.feedback = ""
-if "improved_argument" not in st.session_state:
-    st.session_state.improved_argument = ""
+if "reason_for_score" not in st.session_state:
+    st.session_state.reason_for_score = ""
 if "topic" not in st.session_state:
     st.session_state.topic = ""
 if "rationality_score" not in st.session_state:
@@ -71,8 +71,9 @@ def stop_recording():
 
 # **Text Input for Debate Topic**
 st.subheader("🎯 Debate Topic")
-st.session_state.topic = st.text_input("Enter the topic of your argument:", st.session_state.topic)
+st.session_state.topic = st.text_input(" ", st.session_state.topic, placeholder="Enter the topic of your argument here...")
 
+st.subheader("📝 Your Argument")
 # **Record Button (Simple Toggle)**
 if st.button("🎙 Record Argument"):
     if st.session_state.recording:
@@ -81,26 +82,39 @@ if st.button("🎙 Record Argument"):
         start_recording()
 
 # **Text Area for Editing Argument**
-st.subheader("📝 Your Argument (Edit if needed)")
-user_input = st.text_area("You can type directly or edit the transcribed speech:", st.session_state.transcribed_text)
+user_input = st.text_area(" ", st.session_state.transcribed_text, placeholder="Enter or edit your argument here...")
+evaluate_button = st.button("✅ Evaluate Argument")
+
+st.divider()
 
 # **Submit Button for AI Evaluation**
-if st.button("✅ Evaluate Argument"):
-    response = requests.post("http://127.0.0.1:5000/evaluate-argument", json={"topic": st.session_state.topic, "text": user_input})
-    
+if evaluate_button:
+    final_argument = user_input if user_input.strip() else st.session_state.transcribed_text  # Use typed text if available
+
+    response = requests.post("http://127.0.0.1:5000/evaluate-argument", json={"topic": st.session_state.topic, "text": final_argument})
+
     if response.status_code == 200:
         result = response.json()
-        st.session_state.rationality_score = result["rationality_score"]
-        st.session_state.feedback = result["feedback"]
+        st.session_state.rationality_score = result.get("rationality_score", None)
+        st.session_state.reason_for_score = result.get("reason_for_score", "No reasoning provided.")
+        st.session_state.feedback = result.get("feedback", "No feedback provided.")
+    
+    elif response.status_code == 400:  # Handle Gemini's blocked response
+        st.session_state.feedback = "⚠️ AI could not generate a response due to content restrictions. Please rephrase your argument."
+
     else:
         st.session_state.feedback = "❌ AI evaluation failed."
 
-# **Display Rationality Meter (Above AI Feedback)**
+# **Display Rationality Score (Next to Subheading)**
 if st.session_state.rationality_score is not None:
-    st.subheader("📊 Rationality Meter")
+    st.subheader(f"📊 Rationality Score: {st.session_state.rationality_score:.2f}")
     st.progress(st.session_state.rationality_score)
 
-# **Display AI Feedback**
+    # Display reason for score below the meter
+    if st.session_state.reason_for_score:
+        st.write(f"📝 *{st.session_state.reason_for_score}*")
+
+# **Display AI Feedback (Without Rationality Score)**
 if st.session_state.feedback:
-    st.subheader("🤖 AI Feedback & Improved Argument:")
+    st.subheader("🤖 AI Feedback:")
     st.write(st.session_state.feedback)

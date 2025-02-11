@@ -89,6 +89,13 @@ def evaluate_argument():
 
     try:
         response = model.generate_content(prompt)
+
+        # **Handle blocked responses gracefully**
+        if not response.parts or not response.text:
+            return jsonify({
+                "error": "⚠️ AI could not generate a response due to content restrictions. Please rephrase your argument."
+            }), 400
+
         ai_output = response.text.strip()  # Extract the generated text
 
         # Extract rationality score
@@ -103,11 +110,26 @@ def evaluate_argument():
         else:
             rationality_score = 0.5  # Default if missing
 
+        # Extract reason for score
+        reason_start = ai_output.find("**Reasoning for Score:**")
+        reason_for_score = "No explanation provided."
+        if reason_start != -1:
+            reason_end = ai_output.find("\n\n", reason_start)
+            reason_for_score = ai_output[reason_start + len("**Reasoning for Score:**"):reason_end].strip()
+
+        # Extract feedback (removes rationality score & reason)
+        feedback_start = ai_output.find("**Feedback:**")
+        feedback = ai_output[feedback_start:].strip() if feedback_start != -1 else "No feedback provided."
+
     except Exception as e:
         print(f"Error: {str(e)}")  # Debugging
         return jsonify({"error": str(e)}), 500
 
-    return jsonify({"rationality_score": rationality_score, "feedback": ai_output})
+    return jsonify({
+        "rationality_score": rationality_score,
+        "reason_for_score": reason_for_score,
+        "feedback": feedback
+    })
 
 # Function to start Streamlit frontend
 def run_streamlit():
