@@ -6,7 +6,7 @@ import scipy.io.wavfile as wav
 import queue
 import tempfile
 
-st.title("🎤 AI Debate Coach - Speech Analysis")
+st.title("🎤 AI Powered Debate Coach")
 
 # Initialize session state variables
 if "recording" not in st.session_state:
@@ -15,6 +15,12 @@ if "transcribed_text" not in st.session_state:
     st.session_state.transcribed_text = ""
 if "audio_data" not in st.session_state:
     st.session_state.audio_data = []
+if "feedback" not in st.session_state:
+    st.session_state.feedback = ""
+if "improved_argument" not in st.session_state:
+    st.session_state.improved_argument = ""
+if "topic" not in st.session_state:
+    st.session_state.topic = ""
 
 # Queue to store recorded audio in real-time
 audio_q = queue.Queue()
@@ -61,17 +67,37 @@ def stop_recording():
         else:
             st.error("❌ Failed to process speech. Try again.")
 
+# **Text Input for Debate Topic**
+st.subheader("🎯 Debate Topic")
+st.session_state.topic = st.text_input("Enter the topic of your argument:", st.session_state.topic)
+
 # **Record Button (Simple Toggle)**
-if st.button("🎙 Record"):
+if st.button("🎙 Record Argument"):
     if st.session_state.recording:
         stop_recording()
     else:
         start_recording()
 
-# **Text Area for Editing**
+# **Text Area for Editing Argument**
 st.subheader("📝 Your Argument (Edit if needed)")
 user_input = st.text_area("You can type directly or edit the transcribed speech:", st.session_state.transcribed_text)
 
-# **Submit Button**
-if st.button("✅ Submit Argument"):
-    st.success("Argument submitted for analysis! (Feature coming in later phases)")
+# **Submit Button for AI Evaluation**
+if st.button("✅ Evaluate Argument"):
+    if not st.session_state.topic.strip():
+        st.error("❌ Please enter a debate topic before submitting.")
+    elif not user_input.strip():
+        st.error("❌ Please enter an argument before submitting.")
+    else:
+        response = requests.post("http://127.0.0.1:5000/evaluate-argument", json={"topic": st.session_state.topic, "text": user_input})
+        
+        if response.status_code == 200:
+            result = response.json()
+            st.session_state.feedback = result["feedback"]
+        else:
+            st.session_state.feedback = "❌ AI evaluation failed."
+
+# **Display AI Feedback**
+if st.session_state.feedback:
+    st.subheader("🤖 AI Feedback & Improved Argument:")
+    st.write(st.session_state.feedback)
