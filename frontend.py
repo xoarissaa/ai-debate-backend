@@ -21,6 +21,8 @@ if "improved_argument" not in st.session_state:
     st.session_state.improved_argument = ""
 if "topic" not in st.session_state:
     st.session_state.topic = ""
+if "rationality_score" not in st.session_state:
+    st.session_state.rationality_score = None
 
 # Queue to store recorded audio in real-time
 audio_q = queue.Queue()
@@ -84,18 +86,19 @@ user_input = st.text_area("You can type directly or edit the transcribed speech:
 
 # **Submit Button for AI Evaluation**
 if st.button("✅ Evaluate Argument"):
-    if not st.session_state.topic.strip():
-        st.error("❌ Please enter a debate topic before submitting.")
-    elif not user_input.strip():
-        st.error("❌ Please enter an argument before submitting.")
+    response = requests.post("http://127.0.0.1:5000/evaluate-argument", json={"topic": st.session_state.topic, "text": user_input})
+    
+    if response.status_code == 200:
+        result = response.json()
+        st.session_state.rationality_score = result["rationality_score"]
+        st.session_state.feedback = result["feedback"]
     else:
-        response = requests.post("http://127.0.0.1:5000/evaluate-argument", json={"topic": st.session_state.topic, "text": user_input})
-        
-        if response.status_code == 200:
-            result = response.json()
-            st.session_state.feedback = result["feedback"]
-        else:
-            st.session_state.feedback = "❌ AI evaluation failed."
+        st.session_state.feedback = "❌ AI evaluation failed."
+
+# **Display Rationality Meter (Above AI Feedback)**
+if st.session_state.rationality_score is not None:
+    st.subheader("📊 Rationality Meter")
+    st.progress(st.session_state.rationality_score)
 
 # **Display AI Feedback**
 if st.session_state.feedback:

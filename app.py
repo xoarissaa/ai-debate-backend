@@ -4,6 +4,7 @@ import speech_recognition as sr
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import google.generativeai as genai  # Google Gemini API
+import re
 
 # Load API Key
 load_dotenv()
@@ -43,7 +44,7 @@ def speech_to_text():
 
 @app.route("/evaluate-argument", methods=["POST"])
 def evaluate_argument():
-    """Uses AI to analyze and provide feedback on the argument and generate an improved version."""
+    """Uses AI to analyze rationality, provide feedback, and improve the argument."""
     data = request.get_json()
     if not data or "text" not in data or "topic" not in data:
         return jsonify({"error": "No text or topic provided"}), 400
@@ -61,8 +62,12 @@ def evaluate_argument():
        - Supporting evidence
        - Potential counterarguments
 
-    2️⃣ **Then, generate an improved version** of the argument that:
-       - Fixes the weaknesses
+    2️⃣ **Assess the rationality of the argument**:
+       - Provide a **rationality score** from **0 (highly emotional) to 1 (highly rational)**.
+       - Explain why the argument was scored that way.
+
+    3️⃣ **Then, generate an improved version** of the argument that:
+       - Fixes weaknesses
        - Strengthens logical reasoning
        - Uses better evidence or examples
        - Is more persuasive and structured
@@ -72,6 +77,9 @@ def evaluate_argument():
 
     **Format your response as follows:**  
     ---
+    **Rationality Score:** X.X  
+    **Reasoning for Score:** (explanation)  
+
     **Feedback:**  
     - Bullet points listing improvements  
 
@@ -82,11 +90,24 @@ def evaluate_argument():
     try:
         response = model.generate_content(prompt)
         ai_output = response.text.strip()  # Extract the generated text
+
+        # Extract rationality score
+        score_line = next((line for line in ai_output.split("\n") if "Rationality Score:" in line), None)
+
+        if score_line:
+            score_match = re.search(r"[-+]?\d*\.\d+|\d+", score_line)  # Extracts numeric value
+            if score_match:
+                rationality_score = float(score_match.group())
+            else:
+                rationality_score = 0.5  # Default if score not found
+        else:
+            rationality_score = 0.5  # Default if missing
+
     except Exception as e:
         print(f"Error: {str(e)}")  # Debugging
         return jsonify({"error": str(e)}), 500
 
-    return jsonify({"feedback": ai_output})
+    return jsonify({"rationality_score": rationality_score, "feedback": ai_output})
 
 # Function to start Streamlit frontend
 def run_streamlit():
