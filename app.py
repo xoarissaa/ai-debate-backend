@@ -52,25 +52,24 @@ def evaluate_argument():
     topic = data["topic"]
     argument = data["text"]
 
-    # AI model prompt using both topic and argument
+    # Updated AI model prompt ensuring it always provides feedback on key areas
     prompt = f"""
     You are an AI debate coach. The topic of the debate is: "{topic}".
 
-    1️⃣ **Evaluate the following argument** in the context of this topic. Provide feedback on:
-       - Logical structure
-       - Clarity and coherence
-       - Supporting evidence
-       - Potential counterarguments
+    **1️⃣ Evaluate the argument based on the following criteria:**  
+    - **Logical Structure:** Is the argument well-organized? Does it follow a clear progression? If it's already structured well, state that no improvements are necessary.  
+    - **Clarity & Coherence:** Is the argument clear and easy to understand? Are there ambiguous or vague points? If it's already clear, explicitly mention that.  
+    - **Supporting Evidence:** Does the argument provide strong evidence? If it lacks evidence, suggest improvements. If it's well-supported, state that it's sufficient.  
+    - **Potential Counterarguments:** Does the argument address opposing views? If not, suggest how it could improve. If it does, acknowledge that it is well-handled.  
 
-    2️⃣ **Assess the rationality of the argument**:
-       - Provide a **rationality score** from **0 (highly emotional) to 1 (highly rational)**.
-       - Explain why the argument was scored that way.
+    **2️⃣ Assess the rationality of the argument:**  
+    - Provide a **rationality score** from **0 (highly emotional) to 1 (highly rational)**.  
+    - Explain why the argument was scored that way.  
 
-    3️⃣ **Then, generate an improved version** of the argument that:
-       - Fixes weaknesses
-       - Strengthens logical reasoning
-       - Uses better evidence or examples
-       - Is more persuasive and structured
+    **3️⃣ Generate an improved version of the argument** that:  
+    - Incorporates the feedback above.  
+    - Fixes weaknesses while keeping the argument’s core ideas.  
+    - Uses better structure, clarity, and stronger reasoning if necessary.  
 
     **User's Argument:**  
     {argument}
@@ -81,10 +80,13 @@ def evaluate_argument():
     **Reasoning for Score:** (explanation)  
 
     **Feedback:**  
-    - Bullet points listing improvements  
+    - **Logical Structure:** (comment)  
+    - **Clarity & Coherence:** (comment)  
+    - **Supporting Evidence:** (comment)  
+    - **Potential Counterarguments:** (comment)  
 
     **Improved Argument:**  
-    - Provide the enhanced version of the argument  
+    (Provide the improved version of the argument incorporating feedback)
     """
 
     try:
