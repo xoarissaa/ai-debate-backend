@@ -91,7 +91,9 @@ st.divider()
 if evaluate_button:
     final_argument = user_input if user_input.strip() else st.session_state.transcribed_text  # Use typed text if available
 
-    response = requests.post("http://127.0.0.1:5000/evaluate-argument", json={"topic": st.session_state.topic, "text": final_argument})
+    # **Show loading spinner while AI processes**
+    with st.spinner("🔍 Analyzing your argument..."):
+        response = requests.post("http://127.0.0.1:5000/evaluate-argument", json={"topic": st.session_state.topic, "text": final_argument})
 
     if response.status_code == 200:
         result = response.json()

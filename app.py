@@ -52,7 +52,7 @@ def evaluate_argument():
     topic = data["topic"]
     argument = data["text"]
 
-    # Updated AI model prompt ensuring it always provides feedback on key areas
+    # **Updated AI model prompt with real counterarguments**
     prompt = f"""
     You are an AI debate coach. The topic of the debate is: "{topic}".
 
@@ -60,7 +60,9 @@ def evaluate_argument():
     - **Logical Structure:** Is the argument well-organized? Does it follow a clear progression? If it's already structured well, state that no improvements are necessary.  
     - **Clarity & Coherence:** Is the argument clear and easy to understand? Are there ambiguous or vague points? If it's already clear, explicitly mention that.  
     - **Supporting Evidence:** Does the argument provide strong evidence? If it lacks evidence, suggest improvements. If it's well-supported, state that it's sufficient.  
-    - **Potential Counterarguments:** Does the argument address opposing views? If not, suggest how it could improve. If it does, acknowledge that it is well-handled.  
+    - **Potential Counterarguments:**  
+      - Identify specific counterarguments that an opposing debater might use.  
+      - Provide at least **one concrete example of a counterpoint** phrased as a debate challenge (e.g., “If we allow X, then what stops Y?”).  
 
     **2️⃣ Assess the rationality of the argument:**  
     - Provide a **rationality score** from **0 (highly emotional) to 1 (highly rational)**.  
@@ -83,10 +85,12 @@ def evaluate_argument():
     - **Logical Structure:** (comment)  
     - **Clarity & Coherence:** (comment)  
     - **Supporting Evidence:** (comment)  
-    - **Potential Counterarguments:** (comment)  
+    - **Potential Counterarguments:**  
+      - (general explanation of weaknesses in counterarguments)  
+      - **Example Counterpoint:** *"If we allow X, then what stops Y?"*  
 
     **Improved Argument:**  
-    (Provide the improved version of the argument incorporating feedback)
+    (Provide the improved version of the argument)
     """
 
     try:
