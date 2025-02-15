@@ -4,7 +4,7 @@
 
 AI-Powered Debate Coach is a web application designed to help users improve their debate arguments using AI-driven feedback and a rationality meter. It allows users to record or type their arguments, receive AI-powered analysis, and refine their statements based on logical feedback.
 
-![Project Demo](assests\images\Project_Demo.png) <!-- Upload a screenshot of the UI showing a full analysis -->
+![Project Demo](assests/images/Project_Demo.png) <!-- Upload a screenshot of the UI showing a full analysis -->
 
 ---
 
@@ -18,7 +18,7 @@ AI-Powered Debate Coach is a web application designed to help users improve thei
 ✅ **Google Gemini AI Integration**: Provides in-depth argument analysis.  
 ✅ **Deployed Online**: Access the tool via a live URL.
 
-![Recording Feature](assests\images\Recording_Feature.png) <!-- Screenshot of the recording button in action -->
+![Recording Feature](assests/images/Recording_Feature.png) <!-- Screenshot of the recording button in action -->
 
 ---
 
@@ -30,9 +30,9 @@ AI-Powered Debate Coach is a web application designed to help users improve thei
 4️⃣ **View rationality score & AI feedback**  
 5️⃣ **Improve your argument based on the feedback**
 
-![Sample Topic and Argument](assests\images\Sample_Topic&Argument.png)
-![AI Feedback Screenshot](assests\images\AI_Feedback.png) <!-- Screenshot showing AI feedback in action -->
-![AI Feedback Screenshot](assests\images\AI_Feedback_2.png)
+![Sample Topic and Argument](assests/images/Sample_Topic&Argument.png)
+![AI Feedback Screenshot](assests/images/AI_Feedback.png) <!-- Screenshot showing AI feedback in action -->
+![AI Feedback Screenshot](assests/images/AI_Feedback_2.png)
 
 ---
 
