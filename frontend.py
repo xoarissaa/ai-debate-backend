@@ -1,12 +1,13 @@
 import streamlit as st
 import requests
+from audio_recorder_streamlit import audio_recorder
 import io
-from pydub import AudioSegment
 
 st.title("🎤 AI Powered Debate Coach")
 
-# Set backend URL for Railway deployment
-BACKEND_URL = "ai-debate-coach-production.up.railway.app"  # Replace with your actual Railway backend URL
+# Set backend URL for local & deployed versions
+#BACKEND_URL = "http://127.0.0.1:5000"  # Uncomment for Local testing and comment deployment BACKEND_URL
+BACKEND_URL = "ai-debate-coach-production.up.railway.app"  # Uncomment for deployment
 
 # Initialize session state variables
 if "transcribed_text" not in st.session_state:
@@ -26,26 +27,32 @@ st.session_state.topic = st.text_input(" ", st.session_state.topic, placeholder=
 
 st.subheader("📝 Your Argument")
 
-# **Record Audio**
-audio_bytes = st.audio("", format="audio/wav", start_time=0)  # Placeholder for Streamlit's audio input
-uploaded_audio = st.file_uploader("🎙 Record or upload your argument", type=["wav"])
+# Get audio input from the recorder
+audio_bytes = audio_recorder()
 
-if uploaded_audio:
+# Detect new recording by comparing with previous audio bytes stored in session state.
+if audio_bytes:
+    # If there's no previous audio or the current audio is different from the previous one,
+    # reset the processed flag.
+    if st.session_state.get("prev_audio_bytes") != audio_bytes:
+        st.session_state.prev_audio_bytes = audio_bytes
+        st.session_state.audio_transcribed = False
+
+# Process the audio only if it hasn't been transcribed yet.
+if audio_bytes and not st.session_state.get("audio_transcribed", False):
+    st.audio(audio_bytes, format="audio/wav")
     st.success("✅ Recording complete! Processing...")
 
-    # Convert uploaded file to the correct format
-    audio = AudioSegment.from_file(uploaded_audio, format="wav")
-    audio_buffer = io.BytesIO()
-    audio.export(audio_buffer, format="wav")
-    audio_buffer.seek(0)
-
-    # Send audio to backend for speech-to-text conversion
-    response = requests.post(f"{BACKEND_URL}/speech-to-text", files={"file": audio_buffer})
+    with st.spinner("🔍 Converting speech to text..."):
+        files = {"file": ("audio.wav", io.BytesIO(audio_bytes), "audio/wav")}
+        response = requests.post(f"{BACKEND_URL}/speech-to-text", files=files)
 
     if response.status_code == 200:
         st.session_state.transcribed_text = response.json().get("transcription", "")
+        st.session_state.audio_transcribed = True  # Mark as processed
     else:
         st.error("❌ Failed to process speech. Try again.")
+
 
 # **Text Area for Editing Argument**
 user_input = st.text_area(" ", st.session_state.transcribed_text, placeholder="Enter or edit your argument here...")
