@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import requests
 from audio_recorder_streamlit import audio_recorder
@@ -5,9 +6,8 @@ import io
 
 st.title("🎤 AI Powered Debate Coach")
 
-# Set backend URL for local & deployed versions
-#BACKEND_URL = "http://127.0.0.1:5000"  # Uncomment for Local testing and comment deployment BACKEND_URL
-BACKEND_URL = "ai-debate-coach-production.up.railway.app"  # Uncomment for deployment
+# Set backend URL using environment variable (or fallback to local)
+BACKEND_URL = os.environ.get("BACKEND_URL", "http://127.0.0.1:5000") # Uncomment for deployment
 
 # Initialize session state variables
 if "transcribed_text" not in st.session_state:
