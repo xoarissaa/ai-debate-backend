@@ -55,35 +55,41 @@ def evaluate_argument():
     prompt = f"""
     You are an AI debate coach. The topic of the debate is: "{topic}".
 
-    Please evaluate the following argument and then generate an improved version that incorporates your feedback. Use the guidelines below:
+    **1️⃣ Evaluate the argument based on the following criteria:**  
+    - **Logical Structure:** Is the argument well-organized? Does it follow a clear progression? If it's already structured well, state that no improvements are necessary.  
+    - **Clarity & Coherence:** Is the argument clear and easy to understand? Are there ambiguous or vague points? If it's already clear, explicitly mention that.  
+    - **Supporting Evidence:** Does the argument provide strong evidence? If it lacks evidence, suggest improvements. If it's well-supported, state that it's sufficient.  
+    - **Potential Counterarguments:**  
+      - Identify specific counterarguments that an opposing debater might use.  
+      - Provide at least **one concrete example of a counterpoint** phrased as a debate challenge (e.g., “If we allow X, then what stops Y?”).  
 
-    1. **Evaluation Criteria:**
-    - **Logical Structure:** Assess whether the argument is well-organized and follows a clear progression. If it is, explicitly state that no improvements are necessary.
-    - **Clarity & Coherence:** Evaluate if the argument is clear and easy to understand; note any ambiguous or vague points.
-    - **Supporting Evidence:** Determine if the argument provides strong evidence. If evidence is lacking, suggest specific improvements.
-    - **Potential Counterarguments:** Identify specific counterpoints that an opposing debater might raise, and provide at least one concrete example (e.g., "If we allow X, then what stops Y?").
+    **2️⃣ Assess the rationality of the argument:**  
+    - Provide a **rationality score** from **0 (highly emotional) to 1 (highly rational)**.  
+    - Explain why the argument was scored that way.  
 
-    2. **Rationality Assessment:**
-    - Provide a rationality score between 0 (highly emotional) and 1 (highly rational).
-    - Explain the reasons for the score.
+    **3️⃣ Generate an improved version of the argument** that:  
+    - Incorporates the feedback above.  
+    - Fixes weaknesses while keeping the argument’s core ideas.  
+    - Uses better structure, clarity, and stronger reasoning if necessary.  
 
-    3. **Improved Argument:**
-    - Generate a revised version of the argument that addresses any weaknesses you identified while preserving its core ideas, and enhances clarity and logical reasoning.
+    **User's Argument:**  
+    {argument}
 
-    Please format your response as follows:
-
+    **Format your response as follows:**  
     ---
     **Rationality Score:** X.X  
-    **Reasoning for Score:** [Your explanation here]
+    **Reasoning for Score:** (explanation)  
 
     **Feedback:**  
-    [Your consolidated feedback covering Logical Structure, Clarity & Coherence, Supporting Evidence, and Potential Counterarguments]
+    - **Logical Structure:** (comment)  
+    - **Clarity & Coherence:** (comment)  
+    - **Supporting Evidence:** (comment)  
+    - **Potential Counterarguments:**  
+      - (general explanation of weaknesses in counterarguments)  
+      - **Example Counterpoint:** *"If we allow X, then what stops Y?"*  
 
     **Improved Argument:**  
-    [The improved version of the argument]
-
-    User's Argument:  
-    {argument}
+    (Provide the improved version of the argument)
     """
 
     try:
