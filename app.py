@@ -55,36 +55,35 @@ def evaluate_argument():
     prompt = f"""
     You are an AI debate coach. The topic of the debate is: "{topic}".
 
-    **1️⃣ Evaluate the argument based on the following criteria:**  
-    - **Logical Structure:** Does the argument follow a clear, logical flow?  
-    - **Clarity & Coherence:** Is the argument clear and easy to understand?  
-    - **Supporting Evidence:** Does the argument provide strong evidence?  
-    - **Potential Counterarguments:** Provide at least one counterpoint that could challenge this argument.  
+    Please evaluate the following argument and then generate an improved version that incorporates your feedback. Use the guidelines below:
 
-    **2️⃣ Assess the rationality of the argument:**  
-    - Provide a **rationality score** from **0 (highly emotional) to 1 (highly rational)**.  
-    - Explain why the argument was scored that way.  
+    1. **Evaluation Criteria:**
+    - **Logical Structure:** Assess whether the argument is well-organized and follows a clear progression. If it is, explicitly state that no improvements are necessary.
+    - **Clarity & Coherence:** Evaluate if the argument is clear and easy to understand; note any ambiguous or vague points.
+    - **Supporting Evidence:** Determine if the argument provides strong evidence. If evidence is lacking, suggest specific improvements.
+    - **Potential Counterarguments:** Identify specific counterpoints that an opposing debater might raise, and provide at least one concrete example (e.g., "If we allow X, then what stops Y?").
 
-    **3️⃣ Generate an improved version of the argument** that:  
-    - Incorporates the feedback above.  
-    - Strengthens logical reasoning and clarity.  
+    2. **Rationality Assessment:**
+    - Provide a rationality score between 0 (highly emotional) and 1 (highly rational).
+    - Explain the reasons for the score.
 
-    **User's Argument:**  
-    {argument}
+    3. **Improved Argument:**
+    - Generate a revised version of the argument that addresses any weaknesses you identified while preserving its core ideas, and enhances clarity and logical reasoning.
 
-    **Format your response as follows:**  
+    Please format your response as follows:
+
     ---
     **Rationality Score:** X.X  
-    **Reasoning for Score:** (explanation)  
+    **Reasoning for Score:** [Your explanation here]
 
     **Feedback:**  
-    - **Logical Structure:** (comment)  
-    - **Clarity & Coherence:** (comment)  
-    - **Supporting Evidence:** (comment)  
-    - **Potential Counterarguments:** (example counterpoint)  
+    [Your consolidated feedback covering Logical Structure, Clarity & Coherence, Supporting Evidence, and Potential Counterarguments]
 
     **Improved Argument:**  
-    (Provide the improved version of the argument)
+    [The improved version of the argument]
+
+    User's Argument:  
+    {argument}
     """
 
     try:
