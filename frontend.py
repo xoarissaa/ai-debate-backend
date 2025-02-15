@@ -5,7 +5,7 @@ import tempfile
 st.title("🎤 AI Powered Debate Coach")
 
 # Set backend URL for local development
-BACKEND_URL = "http://127.0.0.1:5000"  # Local Flask backend
+BACKEND_URL = "ai-debate-coach-production.up.railway.app"  # Local Flask backend
 
 # Initialize session state variables
 if "transcribed_text" not in st.session_state:
