@@ -1,0 +1,32 @@
+GNU AFFERO GENERAL PUBLIC LICENSE
+Version 3, 19 November 2007
+
+Copyright (c) 2025 Shahbaz Tariq
+
+Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.
+
+## Preamble
+
+The GNU Affero General Public License is a free, copyleft license designed specifically to ensure that modified versions of web-based applications remain open-source, even when deployed as a service over a network.
+
+The licenses for most software and other practical works are designed to take away your freedom to share and change the works. By contrast, the GNU Affero General Public License is intended to guarantee your freedom to share and change all versions of a program—to make sure it remains free software for all its users.
+
+To protect your rights, we need to prevent others from denying you these rights or asking you to surrender them. Therefore, you have certain responsibilities if you distribute copies of the software, or if you modify it.
+
+For full details, refer to the complete license text here:  
+🔗 [https://www.gnu.org/licenses/agpl-3.0.en.html](https://www.gnu.org/licenses/agpl-3.0.en.html)
+
+## Terms and Conditions
+
+- **Freedom to Use and Share**: You are free to run, share, and modify this software, provided that any modifications and distributions remain under this same AGPL v3.0 license.
+- **Web Application Clause**: If you make this software available as a web service (SaaS, hosted application, etc.), **you must provide access to the source code**.
+- **No Proprietary Commercial Use**: You may not incorporate this software into closed-source commercial applications.
+- **Source Code Disclosure**: If you distribute modified versions, you must make the source code publicly available under the same AGPL v3.0 terms.
+- **License Compatibility**: Any work that incorporates this software must also remain open-source under AGPL v3.0.
+
+## Disclaimer of Warranty
+
+This software is provided "as-is", without any warranty. The authors and contributors are **not liable for any damages** arising from its use.
+
+For the full legal text of AGPL v3.0, visit:  
+🔗 [https://www.gnu.org/licenses/agpl-3.0.en.html](https://www.gnu.org/licenses/agpl-3.0.en.html)
