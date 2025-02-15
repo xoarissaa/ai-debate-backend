@@ -1,5 +1,4 @@
 import os
-import threading
 import speech_recognition as sr
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
@@ -137,10 +136,6 @@ def evaluate_argument():
         "feedback": feedback
     })
 
-# Function to start Streamlit frontend
-def run_streamlit():
-    os.system("streamlit run frontend.py --server.port=8501 --server.headless true")
-
 if __name__ == "__main__":
-    threading.Thread(target=run_streamlit, daemon=True).start()
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # Use Railway's dynamic port
+    app.run(host="0.0.0.0", port=port, debug=True)
