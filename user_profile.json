@@ -1,0 +1,30 @@
+{
+    "name": "Arissa Nurjannah",
+    "email": "arissa2208@gmail.com",
+    "registered": true,
+    "arijannah1405@gmail.com": {
+        "name": "Arissa",
+        "password": "Arissa2208"
+    },
+    "leahl1910@gmail.com": {
+        "name": "Leah",
+        "password": "$2b$12$YdKtwtVjL56hsUrNPEdXDuEeJf/knd9izlgJv67m0/dAZUWrOJFSO",
+        "verified": true,
+        "verification_code": "rZwDWI",
+        "reset_code": "CHl6Gu"
+    },
+    "arissa2208@gmail.com": {
+        "name": "Arissa",
+        "password": "$2b$12$tJgYci9qOIA.dgWdb5fJ2e9Hgk26SILqr.cs0Fo/1ypsRCLjeODEi",
+        "verified": true,
+        "verification_code": "oevJG3",
+        "contact": "010-5459402",
+        "institution": "Universiti Poly-Tech Malaysia"
+    },
+    "kl2307013949@student.uptm.edu.my": {
+        "name": "Ari",
+        "password": "$2b$12$A0s2El7tAfm973ZeguR65uNSW7EIPt79x6hvrDMxSprufIycQ8Fq2",
+        "verified": false,
+        "verification_code": "e7WP8T"
+    }
+}

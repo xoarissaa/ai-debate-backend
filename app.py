@@ -2,16 +2,17 @@ import os
 import speech_recognition as sr
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
-import google.generativeai as genai  # Google Gemini API
+import google.generativeai as genai 
 import re
+import sqlite3
 
 # Load API Key
 load_dotenv()
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_API_KEY = os.getenv("AIzaSyCGNMSoVt0oEpjypMu044KWJDaP1xC6Mwc")
 
 # Initialize Gemini AI
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-pro")  # Use Gemini-Pro for text-based tasks
+genai.configure(api_key="AIzaSyCGNMSoVt0oEpjypMu044KWJDaP1xC6Mwc")
+model = genai.GenerativeModel("gemini-1.5-pro-latest")  
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -123,6 +124,116 @@ def evaluate_argument():
         "reason_for_score": reason_for_score,
         "feedback": feedback
     })
+
+@app.route("/generate-motion", methods=["POST"])
+def generate_motion():
+    data = request.get_json()
+    topic = data.get("topic", "General")
+
+    prompt = f"Suggest a debate motion related to {topic}."
+    response = model.generate_content(prompt)
+
+    return jsonify({"motion": response.text.strip()})
+
+@app.route("/save-argument", methods=["POST"])
+def save_argument():
+    """Saves an evaluated argument to the SQLite database."""
+    data = request.get_json()
+    if not data or "email" not in data or "topic" not in data or "argument" not in data or "score" not in data or "feedback" not in data:
+        return jsonify({"error": "Missing data"}), 400  # Return 400 if any required field is missing.
+
+    try:
+        conn = sqlite3.connect("database.db")
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            INSERT INTO arguments (email, topic, argument, score, feedback) 
+            VALUES (?, ?, ?, ?, ?)
+        """, (data["email"], data["topic"], data["argument"], data["score"], data["feedback"]))
+
+        conn.commit()
+        conn.close()
+        
+        return jsonify({"message": "Argument saved successfully!"}), 201  # Return 201 Created on success.
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500  # Return 500 for any internal server error.
+
+@app.route("/get-arguments", methods=["GET"])
+def get_arguments():
+    email = request.args.get("email")
+    if not email:
+        return jsonify({"error": "Email parameter is missing"}), 400
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, topic, argument, score, feedback FROM arguments WHERE email = ?", (email,))
+    arguments = cursor.fetchall()
+    conn.close()
+
+    if not arguments:
+        return jsonify({"message": "No saved arguments found."}), 404
+
+    result = [
+        {
+            "id": row[0],  # ✅ Include the ID field
+            "topic": row[1],
+            "argument": row[2],
+            "score": row[3],
+            "feedback": row[4]
+        } 
+        for row in arguments
+    ]
+    return jsonify({"arguments": result}), 200
+
+@app.route("/delete-argument", methods=["POST"])
+def delete_argument():
+    """Deletes an argument by ID."""
+    data = request.get_json()
+    argument_id = data.get("id")
+
+    if not argument_id:
+        return jsonify({"error": "Missing argument ID"}), 400  
+
+    try:
+        conn = sqlite3.connect("database.db")
+        cursor = conn.cursor()
+
+        cursor.execute("DELETE FROM arguments WHERE id=?", (argument_id,))
+        conn.commit()
+        conn.close()
+
+        return jsonify({"message": "Argument deleted successfully!"}), 200  
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500  
+
+@app.route("/get-leaderboard", methods=["GET"])
+def get_leaderboard():
+    """Returns the top users based on argument count and average score."""
+    try:
+        conn = sqlite3.connect("database.db")
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT email, COUNT(*) AS total_arguments, AVG(score) AS avg_score
+            FROM arguments
+            GROUP BY email
+            ORDER BY avg_score DESC
+            LIMIT 10
+        """)
+        leaderboard = cursor.fetchall()
+        conn.close()
+
+        # Convert to JSON format
+        leaderboard_data = [
+            {"email": row[0], "total_arguments": row[1], "average_score": round(row[2], 2) if row[2] else 0}
+            for row in leaderboard
+        ]
+
+        return jsonify({"leaderboard": leaderboard_data}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
