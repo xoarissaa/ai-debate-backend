@@ -6,12 +6,19 @@ import smtplib
 import random
 import string
 from email.message import EmailMessage
+from dotenv import load_dotenv
+
+# ✅ Load email and password securely
+load_dotenv()
+EMAIL_USER = os.getenv("EMAIL_USER")
+EMAIL_PASS = os.getenv("EMAIL_PASS")
 
 st.set_page_config(page_title="User Authentication", layout="wide")
 
+# 🔒 File for storing user data
 PROFILE_FILE = "user_profile.json"
 
-# 🎨 Hide default Streamlit UI
+# 🎨 Hide Streamlit UI elements for a clean look
 st.markdown("""
     <style>
         #MainMenu, header, footer, section[data-testid="stSidebar"] {
@@ -43,31 +50,27 @@ if os.path.exists(PROFILE_FILE):
 else:
     user_data = {}
 
-# ✅ Password Helpers
+# ✅ Helper functions
 def hash_password(password):
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 def verify_password(password, hashed_password):
     return bcrypt.checkpw(password.encode(), hashed_password.encode())
 
-# ✅ Email & Code
 def generate_verification_code():
     return ''.join(random.choices(string.ascii_letters + string.digits, k=6))
 
 def send_verification_email(email, code):
-    sender_email = "arissa2208@gmail.com"
-    sender_password = "opgr osyg edkw wppn"
-
     msg = EmailMessage()
     msg.set_content(f"Your verification code is: {code}")
     msg["Subject"] = "Verify Your Email"
-    msg["From"] = sender_email
+    msg["From"] = EMAIL_USER
     msg["To"] = email
 
     try:
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
-        server.login(sender_email, sender_password)
+        server.login(EMAIL_USER, EMAIL_PASS)
         server.send_message(msg)
         server.quit()
         return True
@@ -75,15 +78,15 @@ def send_verification_email(email, code):
         print("Email Error:", str(e))
         return False
 
-# 🌟 Tabs: Login / Register / Forgot Password
+# 🌟 Authentication Tabs
 st.title("🔐 User Authentication")
 tabs = st.tabs(["🔑 Login", "📝 Register", "🔒 Forgot Password"])
 
-# 🔑 LOGIN
+# 🔑 LOGIN TAB
 with tabs[0]:
     st.subheader("Login")
-    email = st.text_input("Email")
-    password = st.text_input("Password", type="password")
+    email = st.text_input("Enter your email")
+    password = st.text_input("Enter your password", type="password")
 
     col1, col2 = st.columns([1, 3])
     with col1:
@@ -103,52 +106,49 @@ with tabs[0]:
             st.switch_page("main.py")
         else:
             st.error("❌ Incorrect password.")
+
     if forgot_clicked:
         st.experimental_rerun()
 
-# 📝 REGISTER
+# 📝 REGISTER TAB
 with tabs[1]:
     st.subheader("Register New Account")
     name = st.text_input("Your Name")
     email = st.text_input("Email Address")
     password = st.text_input("Create Password", type="password")
-    institution = st.text_input("Institution (School, College, etc.)")
-    contact = st.text_input("Contact Number")
 
     if st.button("Register"):
-        if not name or not email or not password or not institution or not contact:
-            st.error("❌ Please fill in all fields.")
+        if not name or not email or not password:
+            st.error("❌ Please complete all fields.")
         elif email in user_data:
             st.error("❌ Email already registered.")
         else:
-            code = generate_verification_code()
-            if send_verification_email(email, code):
+            verification_code = generate_verification_code()
+            if send_verification_email(email, verification_code):
                 user_data[email] = {
                     "name": name,
                     "password": hash_password(password),
-                    "institution": institution,
-                    "contact": contact,
                     "verified": False,
-                    "verification_code": code
+                    "verification_code": verification_code
                 }
                 with open(PROFILE_FILE, "w") as file:
                     json.dump(user_data, file, indent=4)
-                st.success("✅ Verification code sent! Please check your email.")
+                st.success("✅ Verification code sent. Check your email.")
             else:
-                st.error("❌ Could not send verification email.")
+                st.error("❌ Failed to send verification email.")
 
     if email in user_data and not user_data[email]["verified"]:
-        code_input = st.text_input("Enter Verification Code")
+        code = st.text_input("Enter your verification code")
         if st.button("Verify"):
-            if code_input == user_data[email]["verification_code"]:
+            if code == user_data[email]["verification_code"]:
                 user_data[email]["verified"] = True
                 with open(PROFILE_FILE, "w") as file:
                     json.dump(user_data, file, indent=4)
                 st.success("✅ Email verified! You can now log in.")
             else:
-                st.error("❌ Incorrect verification code.")
+                st.error("❌ Invalid verification code.")
 
-# 🔒 FORGOT PASSWORD
+# 🔒 FORGOT PASSWORD TAB
 with tabs[2]:
     st.subheader("Reset Your Password")
     email = st.text_input("Registered Email")
@@ -161,7 +161,7 @@ with tabs[2]:
             if send_verification_email(email, reset_code):
                 st.success("✅ Reset code sent to your email.")
             else:
-                st.error("❌ Failed to send reset code.")
+                st.error("❌ Failed to send email.")
         else:
             st.error("❌ Email not found.")
 
@@ -174,6 +174,6 @@ with tabs[2]:
             del user_data[email]["reset_code"]
             with open(PROFILE_FILE, "w") as file:
                 json.dump(user_data, file, indent=4)
-            st.success("✅ Password updated. You can now log in.")
+            st.success("✅ Password updated! You can now log in.")
         else:
             st.error("❌ Invalid reset code.")
