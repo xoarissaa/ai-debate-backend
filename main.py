@@ -36,7 +36,7 @@ if "authenticated" not in st.session_state or not st.session_state["authenticate
     st.switch_page("pages/profile.py")
 
 # ✅ Backend
-BACKEND_URL = "http://127.0.0.1:5000"
+BACKEND_URL = "https://ai-debate-backend.onrender.com"
 
 # ✅ Init state
 for key in ["topic", "transcribed_text", "feedback", "reason_for_score", "rationality_score"]:
