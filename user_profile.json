@@ -26,5 +26,13 @@
         "password": "$2b$12$A0s2El7tAfm973ZeguR65uNSW7EIPt79x6hvrDMxSprufIycQ8Fq2",
         "verified": false,
         "verification_code": "e7WP8T"
+    },
+    "uptmenglishcouncil@gmail.com": {
+        "name": "Eleanor",
+        "password": "$2b$12$pcg60NhklOm/Rc/Bb24nxeXd5bDDDXfN8zJWeZRygL.qjpuZYsP3G",
+        "institution": "UPTM",
+        "contact": "0192246094",
+        "verified": true,
+        "verification_code": "zVoSUz"
     }
 }
